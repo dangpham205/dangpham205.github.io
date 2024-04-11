@@ -606,21 +606,6 @@ function init() {
     const scene = new _three.Scene();
     const camera = new _three.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     const orbit = new (0, _orbitControlsJs.OrbitControls)(camera, renderer.domElement);
-    const listener = new _three.AudioListener();
-    camera.add(listener);
-    // const backgroundSound = new THREE.Audio(listener)
-    // const audioLoader = new THREE.AudioLoader()
-    // audioLoader.load('../assets/tameimpala.mp3', function(buffer) {
-    //     backgroundSound.setBuffer(buffer)
-    //     backgroundSound.setLoop(true)
-    //     backgroundSound.setVolume(0.4)
-    //     backgroundSound.play()
-    // })
-    const sound4 = new _three.Audio(listener);
-    const tameElement = document.getElementById("tameimpala");
-    sound4.setMediaElementSource(tameElement);
-    sound4.setVolume(0.5);
-    tameElement.play();
     const axesHelper = new _three.AxesHelper(5);
     scene.add(axesHelper);
     camera.position.set(-10, 30, 30);
@@ -653,15 +638,15 @@ function init() {
     sphere.castShadow = true;
     const ambientLight = new _three.AmbientLight(0x333333);
     scene.add(ambientLight);
-    // const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.8);
-    // scene.add(directionalLight);
-    // directionalLight.position.set(-30, 50, 0);
-    // directionalLight.castShadow = true;
-    // directionalLight.shadow.camera.bottom = -12;
-    // const dLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
-    // scene.add(dLightHelper);
-    // const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
-    // scene.add(dLightShadowHelper);
+    const directionalLight = new _three.DirectionalLight(0xFFFFFF, 0.8);
+    scene.add(directionalLight);
+    directionalLight.position.set(-30, 50, 0);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.camera.bottom = -12;
+    const dLightHelper = new _three.DirectionalLightHelper(directionalLight, 5);
+    scene.add(dLightHelper);
+    const dLightShadowHelper = new _three.CameraHelper(directionalLight.shadow.camera);
+    scene.add(dLightShadowHelper);
     const spotLight = new _three.SpotLight(0xFFFFFF);
     scene.add(spotLight);
     spotLight.position.set(-100, 100, 0);
@@ -669,11 +654,11 @@ function init() {
     spotLight.angle = 0.2;
     const sLightHelper = new _three.SpotLightHelper(spotLight);
     scene.add(sLightHelper);
-    //scene.fog = new THREE.Fog(0xFFFFFF, 0, 200);
+    scene.fog = new _three.Fog(0xFFFFFF, 0, 200);
     scene.fog = new _three.FogExp2(0xFFFFFF, 0.01);
-    //renderer.setClearColor(0xFFEA00);
+    renderer.setClearColor(0xFFEA00);
     const textureLoader = new _three.TextureLoader();
-    //scene.background = textureLoader.load(stars);
+    scene.background = textureLoader.load((0, _starsJpgDefault.default));
     const cubeTextureLoader = new _three.CubeTextureLoader();
     scene.background = cubeTextureLoader.load([
         (0, _nebulaJpgDefault.default),
@@ -724,16 +709,16 @@ function init() {
     const lastPointZ = plane2.geometry.attributes.position.array.length - 1;
     plane2.geometry.attributes.position.array[lastPointZ] -= 10 * Math.random();
     const sphere2Geometry = new _three.SphereGeometry(4);
-    // const vShader = `
-    //     void main() {
-    //         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    //     }
-    // `;
-    // const fShader = `
-    //     void main() {
-    //         gl_FragColor = vec4(0.5, 0.5, 1.0, 1.0);
-    //     }
-    // `;
+    const vShader = `
+        void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    `;
+    const fShader = `
+        void main() {
+            gl_FragColor = vec4(0.5, 0.5, 1.0, 1.0);
+        }
+    `;
     const sphere2Material = new _three.ShaderMaterial({
         vertexShader: document.getElementById("vertexShader").textContent,
         fragmentShader: document.getElementById("fragmentShader").textContent
@@ -754,11 +739,11 @@ function init() {
         // Play a specific animation
         const clip = _three.AnimationClip.findByName(clips, "myAnimation");
         const action = mixer.clipAction(clip);
-    //action.play();
-    // Play all animations
-    // clips.forEach( function ( clip ) {
-    // 	mixer.clipAction( clip ).play();
-    // } );
+        action.play();
+        // Play all animations
+        clips.forEach(function(clip) {
+            mixer.clipAction(clip).play();
+        });
     }, undefined, function(error) {
         console.error(error);
     });
@@ -777,10 +762,10 @@ function init() {
     gui.add(options, "wireframe").onChange(function(e) {
         sphere.material.wireframe = e;
     });
-    gui.add(options, "speed", 0, 0.1);
-    gui.add(options, "angle", 0, 1);
-    gui.add(options, "penumbra", 0, 1);
-    gui.add(options, "intensity", 0, 1);
+    // gui.add(options, 'speed', 0, 0.1);
+    // gui.add(options, 'angle', 0, 1);
+    // gui.add(options, 'penumbra', 0, 1);
+    // gui.add(options, 'intensity', 0, 1);
     let step = 0;
     const mousePosition = new _three.Vector2();
     window.addEventListener("mousemove", function(e) {
@@ -805,7 +790,6 @@ function init() {
         rayCaster.setFromCamera(mousePosition, camera);
         const intersects = rayCaster.intersectObjects(scene.children);
         //console.log(intersects);
-        // // audio
         for(let i = 0; i < intersects.length; i++){
             if (intersects[i].object.id === sphereId) intersects[i].object.material.color.set(0xFF0000);
             if (intersects[i].object.name === "theBox") {
@@ -827,6 +811,13 @@ function init() {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
+    const listener = new _three.AudioListener();
+    camera.add(listener);
+    const sound4 = new _three.Audio(listener);
+    const tameElement = document.getElementById("tameimpala");
+    sound4.setMediaElementSource(tameElement);
+    sound4.setVolume(0.5);
+    tameElement.play();
 }
 
 },{"three":"ktPTu","three/examples/jsm/controls/OrbitControls.js":"7mqRv","dat.gui":"k3xQk","three/examples/jsm/loaders/GLTFLoader.js":"dVRsF","../img/nebula.jpg":"jBLO3","../img/stars.jpg":"5qL1f","92032f3d3b1f797a":"5KYoF","@parcel/transformer-js/src/esmodule-helpers.js":"7Rzro"}],"ktPTu":[function(require,module,exports) {
