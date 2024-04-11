@@ -800,6 +800,17 @@ function animate(time) {
     renderer.render(scene, camera);
 //console.log(window.innerHeight);
 }
+// audio
+const listener = new _three.AudioListener();
+camera.add(listener);
+const backgroundSound = new _three.Audio(listener);
+const audioLoader = new _three.AudioLoader();
+audioLoader.load("../assets/tameimpala.mp3", function(buffer) {
+    backgroundSound.setBuffer(buffer);
+    backgroundSound.setLoop(true);
+    backgroundSound.setVolume(0.4);
+    backgroundSound.play();
+});
 renderer.setAnimationLoop(animate);
 window.addEventListener("resize", function() {
     camera.aspect = window.innerWidth / window.innerHeight;
