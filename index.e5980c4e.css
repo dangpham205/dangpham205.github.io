@@ -1,0 +1,62 @@
+@import "https://fonts.googleapis.com/css?family=Montserrat:600&display=swap";
+body {
+  background: #6f13d2;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+button {
+  background: #6f13d2;
+}
+
+span {
+  perspective: 1000px;
+  width: 180px;
+  height: 55px;
+  margin: 0 15px;
+  display: inline-flex;
+  position: relative;
+}
+
+span a {
+  letter-spacing: 1px;
+  transform-style: preserve-3d;
+  font-family: Montserrat, sans-serif;
+  font-size: 19px;
+  transition: transform .25s;
+  transform: translateZ(-25px);
+}
+
+span a:before, span a:after {
+  content: "IMPALAAAA";
+  box-sizing: border-box;
+  border: 5px solid #000;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  width: 180px;
+  height: 55px;
+  display: flex;
+  position: absolute;
+}
+
+span a:before {
+  color: #fff;
+  content: "TAME";
+  background: #000;
+  transform: rotateY(0)translateZ(25px);
+}
+
+span a:after {
+  color: #000;
+  transform: rotateX(90deg)translateZ(25px);
+}
+
+span a:hover {
+  transform: translateZ(-25px)rotateX(-90deg);
+}
+/*# sourceMappingURL=index.e5980c4e.css.map */
